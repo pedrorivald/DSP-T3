@@ -10,6 +10,8 @@ pip install motor
 
 pip freeze > requirements.txt
 
+pip install --no-cache-dir -r requirements.txt
+
 uvicorn main:app --reload --port 8000
 
 # Rodar no Docker
