@@ -13,7 +13,7 @@ app = FastAPI(title="Oficina Mecânica")
 
 @app.on_event("startup")
 async def init_db():
-  await init_beanie(database=db, document_models=[Peca, Servico, Mecanico, Cliente, OrdemServico])
+  await init_beanie(database=db.db, document_models=[Peca, Servico, Mecanico, Cliente, OrdemServico])
 
 app.add_exception_handler(NotFoundException, not_found_exception_handler)
 app.add_exception_handler(BadRequestException, bad_request_exception_handler)

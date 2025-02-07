@@ -1,10 +1,13 @@
 from typing import Optional
 from datetime import datetime
 from models.models import Cliente
+from schemas.cliente_schema import ClienteCreate, ClientePaginatedResponse
+from schemas.util_schema import Pagination
 
 class ClienteRepository:
   
-  async def create_cliente(self, cliente: Cliente):
+  async def create_cliente(self, data: ClienteCreate):
+    cliente = Cliente(**data.model_dump())
     await cliente.insert()
     return cliente
   
@@ -12,11 +15,11 @@ class ClienteRepository:
     total = await Cliente.find_all().count()
     clientes = await Cliente.find_all().skip((page - 1) * size).limit(size).to_list()
     
-    return {
-      "resultado": clientes, 
-      "paginacao": {
-        "page": page, 
-        "size": size, 
-        "total": total
-      }
-    }
+    return ClientePaginatedResponse(
+      clientes=[cliente.to_dict() for cliente in clientes],
+      pagination=Pagination(
+        page=page,
+        size=size,
+        total=total
+      )
+    )

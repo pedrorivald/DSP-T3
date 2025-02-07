@@ -2,8 +2,18 @@ from beanie import Document, Link
 from typing import List, Optional
 from datetime import datetime
 
+from bson import ObjectId
 
-class Peca(Document):
+class BaseDocument(Document):
+  def to_dict(self):
+    """Converte ObjectId para string em qualquer documento Beanie."""
+    data = self.model_dump()
+    if isinstance(self.id, ObjectId):
+      data["id"] = str(self.id)
+    return data
+
+
+class Peca(BaseDocument):
   nome: str
   marca: str
   modelo: str
@@ -13,7 +23,7 @@ class Peca(Document):
     collection = "pecas"
 
 
-class Servico(Document):
+class Servico(BaseDocument):
   nome: str
   valor: float
   ativo: bool
@@ -23,7 +33,7 @@ class Servico(Document):
     collection = "servicos"
 
 
-class Mecanico(Document):
+class Mecanico(BaseDocument):
   nome: str
   sobrenome: str
   telefone: str
@@ -33,7 +43,7 @@ class Mecanico(Document):
     collection = "mecanicos"
 
 
-class Cliente(Document):
+class Cliente(BaseDocument):
   nome: str
   sobrenome: str
   endereco: str
@@ -43,7 +53,7 @@ class Cliente(Document):
     collection = "clientes"
 
 
-class OrdemServico(Document):
+class OrdemServico(BaseDocument):
   cliente: Link[Cliente]
   mecanico: Link[Mecanico]
   servicos: List[Link[Servico]]
