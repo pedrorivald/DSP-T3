@@ -3,7 +3,7 @@ from fastapi import APIRouter, Query
 from repositories.peca_repository import PecaRepository
 from schemas.peca_schema import PecaCreate, PecaResponse, PecaPaginatedResponse, PecaResponse, PecaUpdate
 
-router = APIRouter(prefix="/pecas", tags=["Pecas"])
+router = APIRouter(prefix="/pecas", tags=["Peças"])
 peca_repo = PecaRepository()
 
 @router.get("/", response_model=PecaPaginatedResponse)

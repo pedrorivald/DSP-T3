@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, Request, Response
-from controllers import cliente_controller, mecanico_controller, peca_controller
+from controllers import cliente_controller, mecanico_controller, peca_controller, servico_controller
 from db import db
 from exceptions.exceptions import BadRequestException, InternalServerErrorException, NotFoundException
 from exceptions.global_exception_handler import bad_request_exception_handler, global_exception_handler, http_exception_handler, internal_server_error_exception_handler, not_found_exception_handler
@@ -24,6 +24,7 @@ app.add_exception_handler(Exception, global_exception_handler)
 app.include_router(cliente_controller.router)
 app.include_router(mecanico_controller.router)
 app.include_router(peca_controller.router)
+app.include_router(servico_controller.router)
 
 logging.basicConfig(
   filename="logs.log",
