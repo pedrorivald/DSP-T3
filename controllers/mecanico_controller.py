@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Query
 
 from repositories.mecanico_repository import MecanicoRepository
-from schemas.mecanico_schema import MecanicoCreate, MecanicoCreateResponse, MecanicoPaginatedResponse, MecanicoResponse, MecanicoUpdate
+from schemas.mecanico_schema import MecanicoCreate, MecanicoPaginatedResponse, MecanicoResponse, MecanicoUpdate
 
 router = APIRouter(prefix="/mecanicos", tags=["Mecanicos"])
 mecanico_repo = MecanicoRepository()
@@ -10,7 +10,7 @@ mecanico_repo = MecanicoRepository()
 async def list_mecanicos(page: int = Query(1, alias="page"), size: int = Query(10, alias="size")):
   return await mecanico_repo.list_mecanicos(page, size)
 
-@router.post("/", response_model=MecanicoCreateResponse)
+@router.post("/", response_model=MecanicoResponse)
 async def create_mecanico(mecanico: MecanicoCreate):
   return await mecanico_repo.create_mecanico(mecanico)
 

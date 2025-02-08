@@ -17,9 +17,6 @@ class MecanicoUpdate(BaseModel):
 
 class MecanicoResponse(MecanicoCreate):
   id: str
-  
-class MecanicoCreateResponse(MecanicoResponse):
-  id: str
     
 class MecanicoPaginatedResponse(BaseModel):
   pagination: Pagination
