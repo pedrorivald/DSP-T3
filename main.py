@@ -1,5 +1,5 @@
 from fastapi import FastAPI, HTTPException, Request, Response
-from controllers import cliente_controller, mecanico_controller, peca_controller, servico_controller
+from controllers import cliente_controller, mecanico_controller, ordem_servico_controller, peca_controller, servico_controller
 from db import db
 from exceptions.exceptions import BadRequestException, InternalServerErrorException, NotFoundException
 from exceptions.global_exception_handler import bad_request_exception_handler, global_exception_handler, http_exception_handler, internal_server_error_exception_handler, not_found_exception_handler
@@ -7,13 +7,13 @@ import logging
 from datetime import datetime
 from beanie import init_beanie
 
-from models.models import Peca, Servico, Mecanico, Cliente, OrdemServico
+from models.models import Peca, PecasOrdemServico, Servico, Mecanico, Cliente, OrdemServico
 
 app = FastAPI(title="Oficina Mecânica")
 
 @app.on_event("startup")
 async def init_db():
-  await init_beanie(database=db.db, document_models=[Peca, Servico, Mecanico, Cliente, OrdemServico])
+  await init_beanie(database=db.db, document_models=[Peca, Servico, Mecanico, Cliente, OrdemServico, PecasOrdemServico])
 
 app.add_exception_handler(NotFoundException, not_found_exception_handler)
 app.add_exception_handler(BadRequestException, bad_request_exception_handler)
@@ -25,6 +25,7 @@ app.include_router(cliente_controller.router)
 app.include_router(mecanico_controller.router)
 app.include_router(peca_controller.router)
 app.include_router(servico_controller.router)
+app.include_router(ordem_servico_controller.router)
 
 logging.basicConfig(
   filename="logs.log",

@@ -51,17 +51,25 @@ class Cliente(BaseDocument):
 
   class Settings:
     collection = "clientes"
+    
+
+class PecasOrdemServico(BaseDocument):
+  peca: Link[Peca]
+  quantidade: int
+  
+  class Settings:
+    collection = "pecas_ordens_servicos"
 
 
 class OrdemServico(BaseDocument):
   cliente: Link[Cliente]
   mecanico: Link[Mecanico]
-  servicos: List[Link[Servico]]
-  pecas: List[Link[Peca]]
+  servicos: Optional[List[Link[Servico]]] = []
+  pecas: Optional[List[Link[PecasOrdemServico]]] = []
   data_abertura: datetime
   data_conclusao: Optional[datetime] = None
   situacao: str
-  valor: float
+  valor: Optional[float] = None
 
   class Settings:
     collection = "ordens_servico"
