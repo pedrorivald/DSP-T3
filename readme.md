@@ -18,3 +18,6 @@ uvicorn main:app --reload --port 8000
 `docker build -t dsp-t3 .`
 `docker run -d -p 8000:8000 dsp-t3`
 Acessar em http://localhost:8000
+
+mongodump --uri="mongodb://localhost:27017" --db=oficina --out=C:\Users\Pedro\Documents\workspace\www\DSP-T3\backup
+mongorestore --uri="mongodb://localhost:27017" --db=oficina C:\Users\Pedro\Documents\workspace\www\DSP-T3\backup

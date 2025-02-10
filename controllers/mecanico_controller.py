@@ -1,16 +1,12 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 import os
-from typing import Optional
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Query
 from fastapi.responses import FileResponse
 
 from exceptions.exceptions import InternalServerErrorException, NotFoundException
-from models.models import Mecanico, OrdemServico
+from models.models import OrdemServico
 from repositories.mecanico_repository import MecanicoRepository
 from schemas.mecanico_schema import MecanicoCreate, MecanicoPaginatedResponse, MecanicoResponse, MecanicoUpdate
-
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
 
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
