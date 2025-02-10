@@ -1,6 +1,5 @@
 from typing import List
 from pydantic import BaseModel
-from models.models import Cliente
 from schemas.util_schema import Pagination
 
 class ClienteCreate(BaseModel):

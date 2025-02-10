@@ -1,6 +1,5 @@
 from typing import Optional
 from fastapi import APIRouter, Depends, Query
-from models.models import Cliente, Mecanico, OrdemServico
 from repositories.ordem_servico_repository import OrdemServicoRepository
 from schemas.ordem_servico_schema import OrdemServicoCreate, OrdemServicoFullResponse, OrdemServicoPaginatedResponse, OrdemServicoPecaCreate, OrdemServicoResponse, OrdemServicoUpdate
 from datetime import datetime

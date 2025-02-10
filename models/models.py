@@ -20,7 +20,7 @@ class Peca(BaseDocument):
   valor: float
 
   class Settings:
-    collection = "pecas"
+    name = "pecas"
 
 
 class Servico(BaseDocument):
@@ -30,7 +30,7 @@ class Servico(BaseDocument):
   categoria: str
 
   class Settings:
-    collection = "servicos"
+    name = "servicos"
 
 
 class Mecanico(BaseDocument):
@@ -40,7 +40,7 @@ class Mecanico(BaseDocument):
   email: Optional[str] = None
 
   class Settings:
-    collection = "mecanicos"
+    name = "mecanicos"
 
 
 class Cliente(BaseDocument):
@@ -50,7 +50,7 @@ class Cliente(BaseDocument):
   telefone: str
 
   class Settings:
-    collection = "clientes"
+    name = "clientes"
     
 
 class PecasOrdemServico(BaseDocument):
@@ -58,7 +58,7 @@ class PecasOrdemServico(BaseDocument):
   quantidade: int
   
   class Settings:
-    collection = "pecas_ordens_servicos"
+    name = "pecas_ordens_servicos"
 
 
 class OrdemServico(BaseDocument):
@@ -72,4 +72,4 @@ class OrdemServico(BaseDocument):
   valor: Optional[float] = None
 
   class Settings:
-    collection = "ordens_servico"
+    name = "ordens_servico"

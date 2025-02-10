@@ -1,6 +1,5 @@
 from typing import List, Optional
 from pydantic import BaseModel
-from models.models import Mecanico
 from schemas.util_schema import Pagination
 
 class MecanicoCreate(BaseModel):
