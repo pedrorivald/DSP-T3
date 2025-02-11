@@ -31,12 +31,6 @@ app.include_router(peca_controller.router)
 app.include_router(servico_controller.router)
 app.include_router(ordem_servico_controller.router)
 
-logging.basicConfig(
-  filename="logs.log",
-  level=logging.DEBUG, # Todos os níveis
-  format="%(asctime)s - %(levelname)s - %(message)s",
-)
-
 def get_log_level(status_code):
   log_levels = {
     2: logging.INFO,      # 2xx: Sucesso
