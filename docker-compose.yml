@@ -1,0 +1,143 @@
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "5m"
+    max-file: "2"
+    tag: "{{.Name}}"
+
+services:
+  api_oficina:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: oficina-api
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - OTEL_SERVICE_NAME=api_oficina
+      - OTEL_RESOURCE_ATTRIBUTES=service.version=v0.0.1,service.env=dev
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcollector:4317
+      - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
+      - OTEL_EXPORTER_OTLP_INSECURE=true
+      - OTEL_PYTHON_LOG_CORRELATION=true
+      - MONGO_HOST=${MONGO_HOST}
+    networks:
+      - otel
+    logging: *default-logging
+
+  # Banco de dados Mongo
+  db:
+    image: mongo:latest
+    container_name: oficina-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - otel
+    logging: *default-logging
+
+  # Inicializar o banco com dados fakes
+  init_data:
+    build:
+      context: ./init_service
+      dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    command: python init.py
+    networks:
+      - otel
+    restart: "no"
+
+  # OpenTelemetry Collector
+  otelcollector:
+    privileged: true
+    user: 0:0
+    image: otel/opentelemetry-collector-contrib:0.118.0
+    container_name: oficina-otelcollector
+    volumes:
+      - ./config/collector/otelcol-config.yml:/etc/otel-collector-config.yml
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/lib/docker/containers:/etc/log/
+    command:
+      - "--config=/etc/otel-collector-config.yml"
+      - "--set=service.telemetry.logs.level=INFO"
+    ports:
+      - "4318:4318" # Porta OTLP HTTP
+      - "4317:4317" # Porta OTLP gRPC
+    networks:
+      - otel
+    logging: *default-logging
+  
+  # Grafana para visualização de métricas, logs e traces
+  grafana:
+    image: grafana/grafana:11.4.0
+    container_name: oficina-grafana
+    ports:
+      - 3000:3000
+    volumes:
+      - ./config/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./config/grafana/datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
+      - ./config/grafana/dashboard.yml:/etc/grafana/provisioning/dashboards/dashboard.yml
+      - ./config/grafana/dashboards:/var/lib/grafana/dashboards
+    networks:
+      - otel
+    logging: *default-logging
+  
+  # Grafana Tempo para armaazenamento de traces
+  tempo:
+    image: grafana/tempo:2.7.0
+    container_name: oficina-tempo
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./config/grafana/tempo.yaml:/etc/tempo.yaml
+    depends_on:
+      - grafana
+    networks:
+      - otel
+    logging: *default-logging
+  
+  # Grafana Mimir para armazenamento de métricas
+  mimir:
+    image: grafana/mimir:2.15.0
+    container_name: oficina-mimir
+    command: [ "-config.file=/etc/mimir.yaml" ]
+    volumes:
+      - ./config/grafana/mimir.yaml:/etc/mimir.yaml
+    depends_on:
+      - grafana
+    networks:
+      - otel
+    logging: *default-logging
+  
+  # Grafana Loki para armazenamento de logs
+  loki:
+    image: grafana/loki:3.3.2
+    container_name: oficina-loki
+    command: [ "-config.file=/etc/loki/loki.yaml" ]
+    volumes:
+      - ./config/grafana/loki.yaml:/etc/loki/loki.yaml
+    depends_on:
+      - grafana
+    networks:
+      - otel
+    logging: *default-logging
+
+networks:
+  otel:
+    name: otel
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  

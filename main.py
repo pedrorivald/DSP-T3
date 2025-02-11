@@ -7,6 +7,10 @@ import logging
 from datetime import datetime
 from beanie import init_beanie
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from models.models import Peca, PecasOrdemServico, Servico, Mecanico, Cliente, OrdemServico
 
 app = FastAPI(title="Oficina Mecânica")
