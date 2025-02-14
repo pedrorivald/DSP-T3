@@ -3,6 +3,7 @@ from typing import List, Optional
 from datetime import datetime
 
 from bson import ObjectId
+from pydantic import BaseModel
 
 class BaseDocument(Document):
   def to_dict(self):
@@ -41,12 +42,17 @@ class Mecanico(BaseDocument):
 
   class Settings:
     name = "mecanicos"
+    
+class Endereco(BaseModel):
+  cidade: str
+  bairro: str
+  logradouro: str
 
 
 class Cliente(BaseDocument):
   nome: str
   sobrenome: str
-  endereco: str
+  endereco: Endereco
   telefone: str
 
   class Settings:

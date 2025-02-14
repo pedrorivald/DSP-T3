@@ -2,16 +2,21 @@ from typing import List
 from pydantic import BaseModel
 from schemas.util_schema import Pagination
 
+class Endereco(BaseModel):
+  cidade: str
+  bairro: str
+  logradouro: str
+
 class ClienteCreate(BaseModel):
   nome: str
   sobrenome: str
-  endereco: str
+  endereco: Endereco
   telefone: str
 
 class ClienteUpdate(BaseModel):
   nome: str
   sobrenome: str
-  endereco: str
+  endereco: Endereco
   telefone: str
 
 class ClienteResponse(ClienteCreate):

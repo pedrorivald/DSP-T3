@@ -3,7 +3,7 @@ from typing import Optional
 from bson import ObjectId
 from fastapi import HTTPException
 from exceptions.exceptions import BadRequestException, NotFoundException
-from models.models import Cliente, Mecanico, OrdemServico, Peca, PecasOrdemServico, Servico
+from models.models import Cliente, Endereco, Mecanico, OrdemServico, Peca, PecasOrdemServico, Servico
 from datetime import datetime, timezone
 
 from schemas.cliente_schema import ClienteResponse
@@ -103,7 +103,11 @@ class OrdemServicoRepository:
         id=str(data.cliente.id), 
         nome=data.cliente.nome, 
         sobrenome=data.cliente.sobrenome,
-        endereco=data.cliente.endereco, 
+        endereco=Endereco(
+          cidade=data.cliente.endereco.cidade,
+          bairro=data.cliente.endereco.bairro,
+          logradouro=data.cliente.endereco.logradouro
+        ), 
         telefone=data.cliente.telefone
       ),
       mecanico=MecanicoResponse(

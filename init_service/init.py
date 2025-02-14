@@ -3,7 +3,7 @@ from datetime import timedelta
 from motor.motor_asyncio import AsyncIOMotorClient
 from beanie import init_beanie
 from faker import Faker
-from models.models import Peca, Servico, Mecanico, Cliente, PecasOrdemServico, OrdemServico
+from models.models import Endereco, Peca, Servico, Mecanico, Cliente, PecasOrdemServico, OrdemServico
 
 fake = Faker("pt_BR")
 
@@ -13,7 +13,9 @@ async def connect():
   await init_beanie(db, document_models=[Peca, Servico, Mecanico, Cliente, PecasOrdemServico, OrdemServico])
 
 async def init_data():
+  print("Inicializando o banco de dados com dados fakes")
   # Cria Peças
+  print("Criando peças")
   pecas = []
   for _ in range(12):
     peca = Peca(
@@ -24,8 +26,10 @@ async def init_data():
     )
     await peca.insert()
     pecas.append(peca)
+    print(peca)
 
   # Cria Serviços
+  print("Criando serviços")
   servicos = []
   categorias = ["Manutenção", "Pneu", "Relação", "Suspensão", "BikeFit", "Limpeza"]
   for _ in range(7):
@@ -37,8 +41,10 @@ async def init_data():
     )
     await servico.insert()
     servicos.append(servico)
+    print(servico)
 
   # Cria dados para Mecanico
+  print("Criando mecanicos")
   mecanicos = []
   for _ in range(5):
     mecanico = Mecanico(
@@ -49,22 +55,28 @@ async def init_data():
     )
     await mecanico.insert()
     mecanicos.append(mecanico)
+    print(mecanico)
 
   # Cria dados para Cliente
+  print("Criando clientes")
   clientes = []
   for _ in range(33):
-    endereco = f"{fake.street_address()}, {fake.city()}, {fake.state()} {fake.postcode()}"
-    
     cliente = Cliente(
       nome=fake.first_name(),
       sobrenome=fake.last_name(),
-      endereco=endereco,
+      endereco=Endereco(
+        cidade=fake.city(),
+        logradouro=f"{fake.street_address()}, {fake.postcode()}",
+        bairro=fake.neighborhood()
+      ),
       telefone=fake.phone_number()
     )
     await cliente.insert()
     clientes.append(cliente)
+    print(cliente)
 
   # Cria itens de peças para ordem de serviço
+  print("Criando peças para ordens de serviço")
   pecas_ordens_servicos = []
   for _ in range(10):
     peca_escolhida = fake.random_element(elements=pecas)
@@ -74,8 +86,10 @@ async def init_data():
     )
     await item.insert()
     pecas_ordens_servicos.append(item)
+    print(item)
 
   # Cria ordens de serviço
+  print("Criando ordens de serviço")
   for _ in range(34):
     cliente_escolhido = fake.random_element(elements=clientes)
     mecanico_escolhido = fake.random_element(elements=mecanicos)
@@ -115,10 +129,15 @@ async def init_data():
       valor=total_ordem if data_conclusao else None
     )
     await ordem.insert()
+    print(ordem)
 
 async def main():
-  await connect()
-  await init_data()
+  try:
+    await connect()
+    await init_data()
+    print("Banco inicializado com sucesso.")
+  except Exception:
+    print(Exception)
 
 if __name__ == "__main__":
   asyncio.run(main())
